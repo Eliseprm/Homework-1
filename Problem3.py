@@ -1,5 +1,6 @@
 
 import numpy as np
+from numpy.random import PCG64 
 import matplotlib.pyplot as plt
 import scipy.stats as stats
 from scipy.stats import kstest
@@ -16,9 +17,16 @@ def draw_student_t(BG, degrees:int):
     
     return(samples)
 
+# Example 
+
+BG = PCG64()
+output_a = draw_student_t(BG, 10)
+print(output_a)
+
+
 ## b)
 
-def random_draw(bg, a, r:bool):
+def random_draw(bg, a:range, r:bool):
     """
     Draws random values from the input array, with or without replacement.
 
@@ -37,6 +45,22 @@ def random_draw(bg, a, r:bool):
     samples = random.choice(a, size=len(a), replace=r)
     
     return samples
+
+# Example: with replacement
+
+bg = PCG64()
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+r = True
+output_b1 = random_draw(bg,a,r)
+print(output_b1)
+
+# Example: without replacement
+
+bg = PCG64()
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+r = False
+output_b2 = random_draw(bg,a,r)
+print(output_b2)
 
 ## c)
 
@@ -60,6 +84,12 @@ def probability_plot(s):
     
     # Show the plot
     plt.show()
+
+# Example 
+
+s = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+output_c=probability_plot(s)
+print(output_c)
 
 ## d)
 
@@ -96,3 +126,11 @@ def bootstrap_ks_test(bg, a, T):
     # Calculate the fraction of times we rejected H0
     p = reject_count / T
     return p
+
+# Example
+
+bg = PCG64()
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+T = 50
+output_d=bootstrap_ks_test(bg, a, T)
+print(output_d)
