@@ -47,19 +47,13 @@ def random_draw(bg, a:range, r:bool):
     return samples
 
 # Example: with replacement
-
-bg = PCG64()
-a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-r = True
-output_b1 = random_draw(bg,a,r)
+bg=PCG64()
+output_b1 = random_draw(bg,output_a,True)
 print(output_b1)
 
 # Example: without replacement
 
-bg = PCG64()
-a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-r = False
-output_b2 = random_draw(bg,a,r)
+output_b2 = random_draw(bg,output_a,False)
 print(output_b2)
 
 ## c)
@@ -87,8 +81,7 @@ def probability_plot(s):
 
 # Example 
 
-s = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-output_c=probability_plot(s)
+output_c=probability_plot(output_a)
 print(output_c)
 
 ## d)
@@ -129,8 +122,5 @@ def bootstrap_ks_test(bg, a, T):
 
 # Example
 
-bg = PCG64()
-a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-T = 50
-output_d=bootstrap_ks_test(bg, a, T)
+output_d=bootstrap_ks_test(bg, output_a, 200)
 print(output_d)
