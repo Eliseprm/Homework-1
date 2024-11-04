@@ -8,119 +8,110 @@ from scipy.stats import kstest
 
 ## a)
 
-def draw_student_t(BG, degrees:int):
-    # Create a Generator object from the provided BitGenerator
-    rng = np.random.Generator(BG)
+def student_t_array(BG, degrees:int):
+    # We create a Generator object from the BitGenerator provided in the inputs. 
+    # Acts like a bridge between the BitGenerator BG and the array 
+    array = np.random.Generator(BG)
     
-    # Draw 200 i.i.d. samples from the Student's t-distribution
-    samples = rng.standard_t(df=degrees, size=200)
+    # Creates 200 random samples from a Student's t-distribution with a specified degrees of freedom
+    t_dist_samples = array.standard_t(df=degrees, size=200)
     
-    return(samples)
+    return(t_dist_samples)
 
-# Example 
+# Example 1: 15 Degrees of freedom 
 
 BG = PCG64()
-output_a = draw_student_t(BG, 10)
-print(output_a)
+output_a1 = student_t_array(BG, 15)
+standard_dev=np.std(output_a1)
+
+print(output_a1)
+print(standard_dev)
+
+# Example 2: 30 Degrees of freedom 
+
+BG = PCG64()
+output_a2 = student_t_array(BG, 30)
+standard_dev=np.std(output_a2)
+
+print(output_a2)
+print(standard_dev)
 
 
 ## b)
 
-def random_draw(bg, a:range, r:bool):
-    """
-    Draws random values from the input array, with or without replacement.
-
-    Parameters:
-    - bg: BitGenerator instance, used to initialize randomness
-    - arr: 1-D array from which values are drawn
-    - r: Boolean, if True draw with replacement, otherwise without replacement
-
-    Returns:
-    - A 1-D array of the same size as arr with randomly drawn values
-    """
-    # Create a Generator object from the provided BitGenerator
-    random = np.random.Generator(bg)
+def bootstrap_draw(bg, a:range, r:bool):
+   
+    # We create a Generator object from the BitGenerator provided in the inputs. 
+    # Acts like a bridge between the BitGenerator BG and the array 
+    random_variable = np.random.Generator(bg)
     
-    # Draw samples from arr with or without replacement based on r
-    samples = random.choice(a, size=len(a), replace=r)
+    # We draw a sample from the provided array a, with or without replacement depending on r being True or False 
+    bootstrap_sample = random_variable.choice(a, size=len(a), replace=r)
     
-    return samples
+    return bootstrap_sample
 
-# Example: with replacement
+# Example 1: with replacement (r = True)
 bg=PCG64()
-output_b1 = random_draw(bg,output_a,True)
+a = [2,4,6,8,10,12,14,16,18,20]
+
+output_b1 = bootstrap_draw(bg,a,True)
 print(output_b1)
 
-# Example: without replacement
+# Example 2: without replacement (r = False)
 
-output_b2 = random_draw(bg,output_a,False)
+output_b2 = bootstrap_draw(bg,a,False)
 print(output_b2)
 
 ## c)
 
-def probability_plot(s):
-    """
-    Creates a Q-Q plot comparing the values in the 1-D array `s` to a standard normal distribution (N(0,1)).
-
-    Parameters:
-    - s: 1-D array of data points to compare with N(0,1) distribution.
+def QQ_plot(s):
     
-    Returns:
-    - None. Displays a Q-Q plot.
-    """
-    # Generate the Q-Q plot
+    # We create a Q-Q plot plotting the probabilities of the sample student-t distribution against the normal distribution N(0,1)
     stats.probplot(s, dist="norm", plot=plt)
     
-    # Add labels and a title for clarity
-    plt.title("Probability Plot of Sample Data vs. N(0,1)")
+    # We add labels for the title, x-axis and y-axis
+    plt.title("Q-Q Plot of Sample student-t vs. N(0,1)")
     plt.xlabel("Theoretical Quantiles")
     plt.ylabel("Sample Quantiles")
     
-    # Show the plot
+    # Shows the QQ plot obtained
     plt.show()
 
 # Example 
 
-output_c=probability_plot(output_a)
+output_c=QQ_plot(output_a1)
 print(output_c)
 
 ## d)
 
-import numpy as np
-from scipy.stats import kstest
+def bootstrap_ks_test_loop(bg, a, T):
 
-def bootstrap_ks_test(bg, a, T):
-    """
-    Performs T bootstrap samples from array a, applies the K-S test for N(0,1),
-    and returns the fraction of tests where H0 is rejected at the 5% level.
-
-    Parameters:
-    - bg: BitGenerator instance, used to initialize randomness
-    - a: 1-D array of real values to bootstrap
-    - T: Positive integer, number of bootstrap samples to generate
-
-    Returns:
-    - p: Fraction of the T simulations where we reject H0 at the 5% significance level
-    """
-    rng = np.random.Generator(bg)
-    reject_count = 0  # Counter for the number of times we reject H0
+    array = np.random.Generator(bg)
+    null_rejected = 0  # Counts the number of times we rejected the null hypothesis
+    # we initialize it to 0 before doing the loop
 
     for _ in range(T):
-        # Bootstrap sample from a with replacement
-        bootstrapped_sample = rng.choice(a, size=len(a), replace=True)
+        # We produce a bootstrap sample with or without replacement depending on r
+        bootstrapped_sample = array.choice(a, size=len(a), replace=True)
         
-        # Perform the Kolmogorov-Smirnov test against the N(0,1) distribution
+        # We do the Kolmogorov-Smirnov test, with H0: bootstrapped sample normally distributed
         ks_stat, p_value = kstest(bootstrapped_sample, 'norm')
         
-        # Check if we reject H0 at the 5% significance level
+        # If p-value < 0.05, we reject H0 and add 1 to the reject_count
         if p_value < 0.05:
-            reject_count += 1
+            null_rejected += 1
     
-    # Calculate the fraction of times we rejected H0
-    p = reject_count / T
-    return p
+    # Calculate the rejection rate
+    rejection_rate = null_rejected / T
+    return rejection_rate
 
-# Example
+# Example 1
 
-output_d=bootstrap_ks_test(bg, output_a, 200)
-print(output_d)
+output_d1=bootstrap_ks_test_loop(bg, output_a1, 100)
+print(output_d1)
+
+# Example 2 - larger number of iterations
+
+output_d2=bootstrap_ks_test_loop(bg, output_a1, 1000)
+print(output_d2)
+
