@@ -80,7 +80,7 @@ def QQ_plot(s):
 # Example 
 
 output_c=QQ_plot(output_a1)
-print(output_c)
+
 
 ## d)
 
