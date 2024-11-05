@@ -24,8 +24,8 @@ BG = PCG64()
 output_a1 = student_t_array(BG, 15)
 standard_dev=np.std(output_a1)
 
-print(output_a1)
-print(standard_dev)
+print(f"We obtain an array of 200 i.i.d random samples such as: {output_a1}")
+print(f"The standard deviation of the array generated is: {standard_dev}")
 
 # Example 2: 30 Degrees of freedom 
 
@@ -33,8 +33,8 @@ BG = PCG64()
 output_a2 = student_t_array(BG, 30)
 standard_dev=np.std(output_a2)
 
-print(output_a2)
-print(standard_dev)
+print(f"We obtain an array of 200 i.i.d random samples such as: {output_a2}")
+print(f"The standard deviation of the array generated is: {standard_dev}")
 
 
 ## b)
@@ -55,12 +55,12 @@ bg=PCG64()
 a = [2,4,6,8,10,12,14,16,18,20]
 
 output_b1 = bootstrap_draw(bg,a,True)
-print(output_b1)
+print(f"We obtain a bootstrapped sample such as: {output_b1}")
 
 # Example 2: without replacement (r = False)
 
 output_b2 = bootstrap_draw(bg,a,False)
-print(output_b2)
+print(f"We obtain a bootstrapped sample such as: {output_b2}")
 
 ## c)
 
@@ -78,7 +78,7 @@ def QQ_plot(s):
     plt.show()
 
 # Example 
-
+print(f"We obtain a Q-Q Plot as the following:")
 output_c=QQ_plot(output_a1)
 
 
@@ -101,17 +101,17 @@ def bootstrap_ks_test_loop(bg, a, T):
         if p_value < 0.05:
             null_rejected += 1
     
-    # Calculate the rejection rate
+    # We compute the rejection rate
     rejection_rate = null_rejected / T
     return rejection_rate
 
-# Example 1
+# Example 1 - KS test on bootstrapped samples from the output array obtained in a)
 
 output_d1=bootstrap_ks_test_loop(bg, output_a1, 100)
-print(output_d1)
+print(f"We obtain a rejection rate of {output_d1}")
 
 # Example 2 - larger number of iterations
 
 output_d2=bootstrap_ks_test_loop(bg, output_a1, 1000)
-print(output_d2)
+print(f"We obtain a rejection rate of {output_d2}")
 

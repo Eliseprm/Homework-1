@@ -59,8 +59,8 @@ def plot_bootstrapped_var(returns, alpha=0.05, n_draws=10000):
 returns_eix = stock_df[stock_df['TICKER'] == 'EIX']['RET'].dropna().values
 output_4b = plot_bootstrapped_var(returns_eix)
 
-## c)
 
+## c)
 
 def bootstrap_var_confidence_interval(returns, alpha=0.05, n_draws=10000, conf_level=0.95):
     
